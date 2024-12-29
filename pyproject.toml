@@ -1,0 +1,13 @@
+[project]
+name = "anime-flow"
+version = "0.1.0"
+description = "Generate anime faces using conditional flow matching"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flax>=0.10.2",
+    "jax[cuda12]>=0.4.38",
+    "kagglehub>=0.3.6",
+    "matplotlib>=3.10.0",
+    "pillow>=11.0.0",
+]
