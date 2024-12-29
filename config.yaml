@@ -19,9 +19,9 @@ training:
   learning_rate: 1.0e-4
   batch_size: 128
   num_steps: 1_000_000
-  warmup_pct: 0.1
-  weight_decay: 1.0e-4
-  grad_clip_norm: 1.0
+  warmup_pct: 0.01
+  weight_decay: 0.0
+  grad_clip_norm: 100.0
   
 # Checkpointing and logging
 checkpointing:

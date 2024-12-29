@@ -14,6 +14,7 @@ import kagglehub
 import matplotlib.pyplot as plt
 import numpy as np
 import optax
+import ot
 import yaml
 from flax import nnx
 from jax.experimental import ode
@@ -42,6 +43,7 @@ def gen_data_batches(data, batch_size):
     while True:
         random_indices = np.random.choice(N, size=batch_size, replace=False)
         batch = data[random_indices]
+        batch = batch.astype(np.float32) / 256
         yield batch
 
 
@@ -53,15 +55,12 @@ def loss_fn(flow, batch):
 
 
 def train_step(flow, optimizer, rngs, batch):
-    x1 = batch
-    x1 = x1.astype(jnp.float32) + jax.random.uniform(
-        rngs(), shape=x1.shape, minval=0, maxval=1
-    )
-    x1 = x1 / 256
+    x0, x1 = batch
+    noise = jax.random.uniform(rngs(), shape=x1.shape, minval=0, maxval=1 / 256)
+    x1 = x1 + noise
     # randomize t
     t = jax.random.uniform(rngs(), (x1.shape[0],), minval=0, maxval=1)
     # randomize x0
-    x0 = jax.random.normal(rngs(), x1.shape)
     xt = x0 + (x1 - x0) * t[:, None, None, None]
     vt = x1 - x0
     batch = (xt, t, vt)
@@ -90,6 +89,20 @@ def sample_images(graphdef, state):
     o = ode.odeint(flow_fn, x, jnp.linspace(0, 1, 1000))
     o = jnp.clip(o[-1], 0, 1)
     return o
+
+
+def generate_ot_pairs(x1):
+    n = x1.shape[0]
+    x0 = np.random.randn(*x1.shape)
+    d1 = x1.reshape(n, -1)
+    d0 = x0.reshape(n, -1)
+    # loss matrix
+    M = ot.dist(d0, d1)
+    a, b = np.ones((n,)), np.ones((n,))
+    G0 = ot.emd(a, b, M)
+    d1 = np.matmul(G0, d1)
+    x1 = d1.reshape(*x1.shape)
+    return x0, x1
 
 
 def plot_new_images(step: int, graphdef, state):
@@ -175,7 +188,8 @@ start = time.perf_counter()
 losses = []
 
 for step, batch in enumerate(train_data_iter):
-    state, loss = train_step_raw(graphdef, state, batch)
+    x0, x1 = generate_ot_pairs(batch)
+    state, loss = train_step_raw(graphdef, state, (x0, x1))
 
     if step % 100 == 0:
         losses.append(loss.item())

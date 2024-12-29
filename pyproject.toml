@@ -10,4 +10,5 @@ dependencies = [
     "kagglehub>=0.3.6",
     "matplotlib>=3.10.0",
     "pillow>=11.0.0",
+    "pot>=0.9.5",
 ]
