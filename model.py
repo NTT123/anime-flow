@@ -174,7 +174,7 @@ class SelfAttention(nnx.Module):
 
     def __call__(self, x):
         q, k, v = jnp.split(self.fc(x), 3, axis=-1)
-        # reshape q, k v, to N, T, N, H
+        # reshape q, k v, to N, T, H, D
         q = q.reshape(q.shape[0], q.shape[1], self.heads, self.head_dim)
         k = k.reshape(k.shape[0], k.shape[1], self.heads, self.head_dim)
         v = v.reshape(v.shape[0], v.shape[1], self.heads, self.head_dim)
