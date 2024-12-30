@@ -28,6 +28,7 @@ checkpointing:
   log_every: 1_000
   plot_every: 10_000
   save_every: 10_000
+  resume_from_checkpoint: null
 
 # Data
 data:

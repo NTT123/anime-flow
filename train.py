@@ -186,8 +186,18 @@ train_data_iter = gen_data_batches(train_data, config["training"]["batch_size"])
 
 start = time.perf_counter()
 losses = []
+ckpt_path = config["checkpointing"].get("resume_from_checkpoint")
+if ckpt_path:
+    del state
+    with open(ckpt_path, "rb") as f:
+        state = pickle.load(f)
+    print(f"Resuming from checkpoint {ckpt_path}")
+    step_str = Path(ckpt_path).stem.split("_")[-1]
+    start_step = int(step_str) + 1
+else:
+    start_step = 1
 
-for step, batch in enumerate(train_data_iter):
+for step, batch in enumerate(train_data_iter, start=start_step):
     x0, x1 = generate_ot_pairs(batch)
     state, loss = train_step_raw(graphdef, state, (x0, x1))
 
