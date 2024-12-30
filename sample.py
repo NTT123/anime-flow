@@ -78,7 +78,7 @@ def main():
         padding=config["model"]["padding"],
         pos_embed_cls_token=config["model"]["pos_embed_cls_token"],
         pos_embed_extra_tokens=config["model"]["pos_embed_extra_tokens"],
-    )  # Load the model
+    )
 
     abstract_flow = nnx.eval_shape(lambda: DiT(dit_config, rngs=nnx.Rngs(0)))
     graphdef, _ = nnx.split(abstract_flow)
