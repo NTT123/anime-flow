@@ -60,7 +60,6 @@ def train_step(flow, optimizer, rngs, batch):
     x1 = x1 + noise
     # randomize t
     t = jax.random.uniform(rngs(), (x1.shape[0],), minval=0, maxval=1)
-    # randomize x0
     xt = x0 + (x1 - x0) * t[:, None, None, None]
     vt = x1 - x0
     batch = (xt, t, vt)
