@@ -42,7 +42,7 @@ def sample_images(graphdef, state, rng):
         return o
 
     x = jax.random.normal(rng, shape=(16, 64, 64, 3), dtype=jnp.float32)
-    o = ode.odeint(flow_fn, x, jnp.linspace(0, 1, 1000))
+    o = ode.odeint(flow_fn, x, jnp.linspace(0, 1, 2))
     o = jnp.clip(o[-1], 0, 1)
     return o
 
