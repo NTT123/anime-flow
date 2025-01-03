@@ -15,4 +15,4 @@ uv run train.py --config ./config.yaml
 uv run sample.py --ckpt ./state_1000000.ckpt --config ./config.yaml --seed 0
 ```
 
-![image](https://github.com/user-attachments/assets/d7372aaa-4409-47d8-bb92-a212d8d17717)
+![image](./generated_samples.png)

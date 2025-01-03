@@ -56,8 +56,6 @@ def loss_fn(flow, batch):
 
 def train_step(flow, optimizer, rngs, batch):
     x0, x1 = batch
-    noise = jax.random.uniform(rngs(), shape=x1.shape, minval=0, maxval=1 / 256)
-    x1 = x1 + noise
     # randomize t
     t = jax.random.uniform(rngs(), (x1.shape[0],), minval=0, maxval=1)
     xt = x0 + (x1 - x0) * t[:, None, None, None]
